@@ -73,25 +73,23 @@
 
         let id = `prioridade-${i}`;
         let checkboxId = `check-prioridade-${i}`;
-        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}" oninput="saveData()"></td>`);
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}"></td>`);
 
         id = `compra-${i}`;
         checkboxId = `check-compra-${i}`;
-        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" class="product-field" placeholder="Produto" oninput="saveData()"></td>`);
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}" class="product-field" placeholder="Produto"></td>`);
 
         id = `concurso-${i}`;
         checkboxId = `check-concurso-${i}`;
-        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" placeholder="Estudo/Prova" oninput="saveData()"></td>`);
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}" placeholder="Estudo/Prova"></td>`);
 
         id = `habito-${i}`;
         checkboxId = `check-habito-${i}`;
-        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" oninput="saveData()"></td>`);
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}"></td>`);
 
         for (let j = 0; j < 7; j++) {
           const extraClass = (j === 5) ? ' class="sabado"' : (j === 6) ? ' class="domingo"' : '';
-          const id = `day-${i}-${j}`;
-          const checkboxId = `day-check-${i}-${j}`;
-          document.write(`<td${extraClass}><input type="checkbox" id="${checkboxId}" onclick="saveData()"><input type="text" id="${id}" oninput="saveData()"></td>`);
+          document.write(`<td${extraClass}><input type="checkbox"></td>`);
         }
 
         document.write('</tr>');
@@ -126,7 +124,7 @@
           const extraClass = (j === 5) ? ' class="sabado"' : (j === 6) ? ' class="domingo"' : '';
           const id = `text-${i}-${j}`;
           const checkboxId = `check-${i}-${j}`;
-          document.write(`<td style="text-align:left;"${extraClass}><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"> <input type="text" id="${id}" oninput="saveData()"></td>`);
+          document.write(`<td style="text-align:left;"${extraClass}><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"> <input type="text" id="${id}"></td>`);
         }
         document.write('</tr>');
       }
@@ -143,42 +141,6 @@
         textField.classList.remove("strikethrough");
       }
     }
-
-    function saveData() {
-      const data = {};
-      document.querySelectorAll('input').forEach(input => {
-        data[input.id] = input.type === 'checkbox' ? input.checked : input.value;
-      });
-      const weekKey = `planner-week-${getWeekNumber(new Date())}`;
-      const monthKey = `planner-month-${new Date().getMonth() + 1}`;
-      localStorage.setItem(weekKey, JSON.stringify(data));
-      localStorage.setItem(monthKey, JSON.stringify(data));
-    }
-
-    function loadData() {
-      const weekKey = `planner-week-${getWeekNumber(new Date())}`;
-      const monthKey = `planner-month-${new Date().getMonth() + 1}`;
-      const savedData = JSON.parse(localStorage.getItem(weekKey)) || JSON.parse(localStorage.getItem(monthKey));
-      if (savedData) {
-        Object.keys(savedData).forEach(id => {
-          const input = document.getElementById(id);
-          if (!input) return;
-          if (input.type === 'checkbox') {
-            input.checked = savedData[id];
-          } else {
-            input.value = savedData[id];
-          }
-        });
-      }
-    }
-
-    function getWeekNumber(date) {
-      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-      const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-      return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
-    }
-
-    window.onload = loadData;
   </script>
 </body>
 </html>
