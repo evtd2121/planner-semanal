@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planner Semanal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #eee;
+    }
+    th.sabado, td.sabado {
+      color: red;
+    }
+    th.domingo, td.domingo {
+      color: red;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+    .strikethrough {
+      text-decoration: line-through;
+    }
+    input[type="text"] {
+      width: 80%;
+    }
+    .product-field {
+      width: 100%;
+    }
+    .checklist-diario-input {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Planner Semanal</h1>
+
+  <table>
+    <tr>
+      <th>Prioridades</th>
+      <th>Lista de Compras</th>
+      <th>Concursos</th>
+      <th>Hábitos</th>
+      <th>Seg</th>
+      <th>Ter</th>
+      <th>Qua</th>
+      <th>Qui</th>
+      <th>Sex</th>
+      <th class="sabado">Sáb</th>
+      <th class="domingo">Dom</th>
+    </tr>
+    <script>
+      for (let i = 0; i < 10; i++) {
+        document.write('<tr>');
+
+        let id = `prioridade-${i}`;
+        let checkboxId = `check-prioridade-${i}`;
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}')"><input type="text" id="${id}" oninput="saveData()"></td>`);
+
+        id = `compra-${i}`;
+        checkboxId = `check-compra-${i}`;
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" class="product-field" placeholder="Produto" oninput="saveData()"></td>`);
+
+        id = `concurso-${i}`;
+        checkboxId = `check-concurso-${i}`;
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" placeholder="Estudo/Prova" oninput="saveData()"></td>`);
+
+        id = `habito-${i}`;
+        checkboxId = `check-habito-${i}`;
+        document.write(`<td style="text-align:left;"><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"><input type="text" id="${id}" oninput="saveData()"></td>`);
+
+        for (let j = 0; j < 7; j++) {
+          const extraClass = (j === 5) ? ' class="sabado"' : (j === 6) ? ' class="domingo"' : '';
+          const id = `day-${i}-${j}`;
+          const checkboxId = `day-check-${i}-${j}`;
+          document.write(`<td${extraClass}><input type="checkbox" id="${checkboxId}" onclick="saveData()"><input type="text" id="${id}" oninput="saveData()"></td>`);
+        }
+
+        document.write('</tr>');
+      }
+    </script>
+  </table>
+
+  <h2>Checklist Diário</h2>
+  <table>
+    <tr>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+      <th><input type="text" placeholder="Data"></th>
+    </tr>
+    <tr>
+      <th>Segunda</th>
+      <th>Terça</th>
+      <th>Quarta</th>
+      <th>Quinta</th>
+      <th>Sexta</th>
+      <th class="sabado">Sábado</th>
+      <th class="domingo">Domingo</th>
+    </tr>
+    <script>
+      for (let i = 0; i < 9; i++) {
+        document.write('<tr>');
+        for (let j = 0; j < 7; j++) {
+          const extraClass = (j === 5) ? ' class="sabado"' : (j === 6) ? ' class="domingo"' : '';
+          const id = `text-${i}-${j}`;
+          const checkboxId = `check-${i}-${j}`;
+          document.write(`<td style="text-align:left;"${extraClass}><input type="checkbox" id="${checkboxId}" onclick="toggleStrike('${checkboxId}', '${id}'); saveData()"> <input type="text" id="${id}" oninput="saveData()"></td>`);
+        }
+        document.write('</tr>');
+      }
+    </script>
+  </table>
+
+  <script>
+    function toggleStrike(checkId, textId) {
+      const checkbox = document.getElementById(checkId);
+      const textField = document.getElementById(textId);
+      if (checkbox.checked) {
+        textField.classList.add("strikethrough");
+      } else {
+        textField.classList.remove("strikethrough");
+      }
+    }
+
+    function saveData() {
+      const data = {};
+      document.querySelectorAll('input').forEach(input => {
+        data[input.id] = input.type === 'checkbox' ? input.checked : input.value;
+      });
+      const weekKey = `planner-week-${getWeekNumber(new Date())}`;
+      const monthKey = `planner-month-${new Date().getMonth() + 1}`;
+      localStorage.setItem(weekKey, JSON.stringify(data));
+      localStorage.setItem(monthKey, JSON.stringify(data));
+    }
+
+    function loadData() {
+      const weekKey = `planner-week-${getWeekNumber(new Date())}`;
+      const monthKey = `planner-month-${new Date().getMonth() + 1}`;
+      const savedData = JSON.parse(localStorage.getItem(weekKey)) || JSON.parse(localStorage.getItem(monthKey));
+      if (savedData) {
+        Object.keys(savedData).forEach(id => {
+          const input = document.getElementById(id);
+          if (!input) return;
+          if (input.type === 'checkbox') {
+            input.checked = savedData[id];
+          } else {
+            input.value = savedData[id];
+          }
+        });
+      }
+    }
+
+    function getWeekNumber(date) {
+      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    }
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>
